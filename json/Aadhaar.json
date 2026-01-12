@@ -1,0 +1,15 @@
+{
+    "status": "success",
+    "document_type": "AADHAAR",
+    "filename": "AA.jpg",
+    "processing_time_seconds": 6.69,
+    "data": {
+        "Name": "Aribant Bantthia",
+        "Address": "S/O Sampat Rai, #4495, street no 01, nai basti, Bathinda, Bathinda, Punjab - 151001",
+        "Aadhaar Number": "6400 5890 8008",
+        "Date of Birth": "22/11/1997",
+        "Gender": "Male",
+        "Photograph": "Yes",
+        "QR Code": "Yes"
+    }
+}

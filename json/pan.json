@@ -1,0 +1,13 @@
+{
+    "status": "success",
+    "document_type": "PAN",
+    "filename": "Pan.pdf",
+    "processing_time_seconds": 9.73,
+    "data": {
+        "Name": "P M JOETHMANI",
+        "PAN Number": "ADKPFJ6156C",
+        "Father's Name": "PACHAPPAN MANMATHAN",
+        "Date of Birth": "04/12/1964",
+        "Photograph": "Yes"
+    }
+}
