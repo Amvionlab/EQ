@@ -11,9 +11,15 @@ const LayoutContent = () => {
     const { loadingState } = useApp();
 
     return (
-        <div id="root">
+        <div id="root" style={{ display: 'flex', minHeight: '100vh' }}>
             <Sidebar />
-            <div className="main-content">
+            <div className="main-content" style={{
+                marginLeft: '70px',
+                width: 'calc(100% - 70px)',
+                minHeight: '100vh',
+                backgroundColor: '#f5f5f5',
+                position: 'relative',
+            }}>
                 <LoadingOverlay
                     isVisible={loadingState.isLoading}
                     title={loadingState.title}

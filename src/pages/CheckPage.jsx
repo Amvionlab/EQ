@@ -11,7 +11,7 @@ import {
 const CheckPage = () => {
   const { showModal } = usePopup();
   const [comparisonResults, setComparisonResults] = useState([]);
-  const [overallStatus, setOverallStatus] = useState("pending"); // pending, success, failuresssssss
+  const [overallStatus, setOverallStatus] = useState("pending"); // pending, success, failure
 
   useEffect(() => {
     performChecks();
@@ -77,7 +77,7 @@ const CheckPage = () => {
     const gstData = gstDataStr ? JSON.parse(gstDataStr) : null;
     const aadharData = aadharDataStr ? JSON.parse(aadharDataStr) : null;
 
-    // Flatten Form Data (assume first page/level has the key details)
+    // Flatten Form Data
     const formFlat = flattenAllPages(formData);
     const results = [];
 
@@ -105,8 +105,6 @@ const CheckPage = () => {
       });
     }
 
-    // Helper to check match
-
     setComparisonResults(results);
 
     // Determine Overall Status
@@ -118,7 +116,7 @@ const CheckPage = () => {
       );
       setOverallStatus(allPassed ? "success" : "failure");
 
-      // Trigger Popup after a short delay to ensure UI renders first
+      // Trigger Popup after a short delay
       setTimeout(() => {
         showModal({
           title: allPassed ? "Verification Successful" : "Verification Failed",
@@ -134,123 +132,259 @@ const CheckPage = () => {
 
   if (overallStatus === "no_form_data") {
     return (
-      <div style={{ padding: "40px", color: "white", textAlign: "center" }}>
+      <div style={{ 
+        padding: "40px", 
+        color: "#333", 
+        textAlign: "center",
+        backgroundColor: "#f5f5f5",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center"
+      }}>
         <FaExclamationTriangle
-          style={{ fontSize: "48px", color: "#ffb74d", marginBottom: "20px" }}
+          style={{ fontSize: "48px", color: "#ff9800", marginBottom: "20px" }}
         />
-        <h2>Form Data Missing</h2>
-        <p>Please upload and scan the main Form Document first.</p>
+        <h2 style={{ color: "#333", marginBottom: "10px" }}>Form Data Missing</h2>
+        <p style={{ color: "#666", fontSize: "16px" }}>Please upload and scan the main Form Document first.</p>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        padding: "30px",
-        maxWidth: "800px",
+    <div style={{
+      backgroundColor: "#f5f5f5",
+      minHeight: "100vh",
+      overflowY: "auto",
+    }}>
+      <div style={{
+        padding: "20px",
+        maxWidth: "1200px",
         margin: "0 auto",
-        color: "#e0e0e0",
-      }}
-    >
-      <div
-        style={{
+        color: "#333",
+      }}>
+        {/* Header */}
+        <div style={{
           display: "flex",
           alignItems: "center",
           gap: "15px",
           marginBottom: "30px",
-          borderBottom: "1px solid #444",
+          borderBottom: "1px solid #e0e0e0",
           paddingBottom: "15px",
-        }}
-      >
-        <FaShieldAlt style={{ fontSize: "32px", color: "#4facfe" }} />
-        <h1 style={{ margin: 0, fontSize: "1.8rem" }}>Data Verification</h1>
-      </div>
-
-      {overallStatus === "no_supporting_docs" && (
-        <div
-          style={{
-            background: "#333",
-            padding: "20px",
-            borderRadius: "8px",
-            textAlign: "center",
-          }}
-        >
-          <p>
-            No supporting documents (PAN, GST, Aadhar) found to compare against.
-          </p>
+          backgroundColor: "#ffffff",
+          padding: "20px",
+          borderRadius: "12px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+        }}>
+          <FaShieldAlt style={{ fontSize: "32px", color: "#2196f3" }} />
+          <h1 style={{ 
+            margin: 0, 
+            fontSize: "1.8rem",
+            color: "#333",
+            fontWeight: "600"
+          }}>Data Verification</h1>
         </div>
-      )}
 
-      {comparisonResults.map((group, index) => (
-        <div
-          key={index}
-          style={{
-            marginBottom: "25px",
-            background: "#1e1e1e",
-            borderRadius: "8px",
-            overflow: "hidden",
-            border: "1px solid #333",
-          }}
-        >
-          <div
-            style={{
-              background: "#252526",
-              padding: "12px 20px",
-              fontWeight: "bold",
-              borderBottom: "1px solid #333",
-            }}
-          >
-            Form vs {group.type}
-          </div>
-          {group.checks.map((check, cIndex) => (
+        {/* Main Content - Scrollable Area */}
+        <div style={{
+          height: "calc(100vh - 150px)",
+          overflowY: "auto",
+          paddingRight: "10px",
+          WebkitOverflowScrolling: "touch",
+        }}>
+          {overallStatus === "no_supporting_docs" && (
+            <div style={{
+              backgroundColor: "#fff",
+              padding: "30px",
+              borderRadius: "12px",
+              textAlign: "center",
+              marginBottom: "20px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              border: "1px solid #e0e0e0",
+            }}>
+              <FaExclamationTriangle 
+                style={{ fontSize: "36px", color: "#ff9800", marginBottom: "15px" }}
+              />
+              <p style={{ 
+                color: "#666", 
+                fontSize: "16px",
+                margin: 0 
+              }}>
+                No supporting documents (PAN, GST, Aadhar) found to compare against.
+              </p>
+            </div>
+          )}
+
+          {comparisonResults.map((group, index) => (
             <div
-              key={cIndex}
+              key={index}
               style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "15px 20px",
-                borderBottom: "1px solid #2a2a2a",
-                background: check.isMatch
-                  ? "rgba(16, 185, 129, 0.05)"
-                  : "rgba(239, 68, 68, 0.05)",
+                marginBottom: "25px",
+                backgroundColor: "#ffffff",
+                borderRadius: "12px",
+                overflow: "hidden",
+                border: "1px solid #e0e0e0",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
               }}
             >
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#999",
-                    marginBottom: "4px",
-                  }}
-                >
-                  {check.field}
-                </div>
-                <div
-                  style={{
-                    fontWeight: "600",
-                    color: check.isMatch ? "#eee" : "#ff7b7b",
-                  }}
-                >
-                  {check.formValue}{" "}
-                  <span style={{ color: "#666", margin: "0 8px" }}>vs</span>{" "}
-                  {check.targetValue}
-                </div>
+              {/* Section Header */}
+              <div style={{
+                backgroundColor: "#f8f9fa",
+                padding: "16px 24px",
+                fontWeight: "600",
+                borderBottom: "1px solid #e0e0e0",
+                color: "#333",
+                fontSize: "1.1rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}>
+                <FaShieldAlt style={{ fontSize: "18px", color: "#2196f3" }} />
+                Form vs {group.type}
               </div>
-              <div style={{ fontSize: "24px" }}>
-                {check.isMatch ? (
-                  <FaCheckCircle style={{ color: "#10b981" }} title="Match" />
-                ) : (
-                  <FaTimesCircle
-                    style={{ color: "#ef4444" }}
-                    title="Mismatch"
-                  />
-                )}
+
+              {/* Comparison Items */}
+              <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                {group.checks.map((check, cIndex) => (
+                  <div
+                    key={cIndex}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      padding: "20px 24px",
+                      borderBottom: cIndex !== group.checks.length - 1 ? "1px solid #f0f0f0" : "none",
+                      backgroundColor: check.isMatch
+                        ? "rgba(76, 175, 80, 0.05)"
+                        : "rgba(244, 67, 54, 0.05)",
+                      transition: "background-color 0.2s ease",
+                      gap: "20px",
+                    }}
+                  >
+                    <div style={{ 
+                      flex: 1,
+                      minWidth: 0, // Prevents overflow issues
+                    }}>
+                      <div style={{
+                        fontSize: "0.85rem",
+                        color: "#666",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        fontWeight: "500",
+                      }}>
+                        {check.field}
+                      </div>
+                      <div style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                      }}>
+                        <div style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          flexWrap: "wrap",
+                        }}>
+                          <span style={{
+                            fontWeight: "600",
+                            color: check.isMatch ? "#333" : "#d32f2f",
+                            backgroundColor: check.isMatch ? "#f1f8e9" : "#ffebee",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            fontSize: "0.9rem",
+                          }}>
+                            Form: {check.formValue}
+                          </span>
+                          <span style={{ color: "#999", fontSize: "14px" }}>→</span>
+                          <span style={{
+                            fontWeight: "600",
+                            color: check.isMatch ? "#333" : "#d32f2f",
+                            backgroundColor: check.isMatch ? "#f1f8e9" : "#ffebee",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            fontSize: "0.9rem",
+                          }}>
+                            {group.type}: {check.targetValue}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Status Icon */}
+                    <div style={{ 
+                      flexShrink: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      backgroundColor: check.isMatch ? "#e8f5e9" : "#ffebee",
+                    }}>
+                      {check.isMatch ? (
+                        <FaCheckCircle style={{ 
+                          fontSize: "22px", 
+                          color: "#4caf50" 
+                        }} 
+                        title="Match" 
+                        />
+                      ) : (
+                        <FaTimesCircle style={{ 
+                          fontSize: "22px", 
+                          color: "#f44336" 
+                        }} 
+                        title="Mismatch" 
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
-      ))}
+
+        {/* Overall Status Indicator */}
+        {overallStatus !== "no_supporting_docs" && comparisonResults.length > 0 && (
+          <div style={{
+            marginTop: "20px",
+            padding: "20px",
+            backgroundColor: "#ffffff",
+            borderRadius: "12px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+            border: "1px solid #e0e0e0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "12px",
+          }}>
+            {overallStatus === "success" ? (
+              <>
+                <FaCheckCircle style={{ fontSize: "24px", color: "#4caf50" }} />
+                <span style={{ 
+                  color: "#333", 
+                  fontWeight: "600",
+                  fontSize: "1.1rem"
+                }}>
+                  All verifications passed successfully
+                </span>
+              </>
+            ) : (
+              <>
+                <FaTimesCircle style={{ fontSize: "24px", color: "#f44336" }} />
+                <span style={{ 
+                  color: "#333", 
+                  fontWeight: "600",
+                  fontSize: "1.1rem"
+                }}>
+                  Some verifications failed. Please review mismatches.
+                </span>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
