@@ -1,20 +1,9 @@
 export const API_CONFIG = {
-    OCR_ENDPOINT: 'http://localhost/atlas-mock-api/eq.php',
-    // OCR_ENDPOINT: 'http://65.1.52.12:8000/ocr',
-    TIMEOUT: 5 * 60 * 60 * 1000 // 5 hours in milliseconds
-};
-
-const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            // Remove data URL prefix to get just the base64 string
-            const base64String = reader.result.split(',')[1];
-            resolve(base64String);
-        };
-        reader.onerror = (error) => reject(error);
-    });
+    AOF_ENDPOINT: 'http://65.1.52.12:8000/ocr/aof',
+    PAN_ENDPOINT: 'http://65.1.52.12:8000/ocr/pan',
+    AADHAR_ENDPOINT: 'http://65.1.52.12:8000/ocr/aadhaar',
+    GST_ENDPOINT: 'http://65.1.52.12:8000/ocr/gst',
+    TIMEOUT: 5 * 60 * 60 * 1000
 };
 
 export async function callOCRSpaceAPI(file, type) {
@@ -22,26 +11,35 @@ export async function callOCRSpaceAPI(file, type) {
         throw new Error('Invalid file object provided to API.');
     }
 
+    // ===================== ENDPOINT SELECTION =====================
+    let endpoint = API_CONFIG.AOF_ENDPOINT;
+
+    switch (type?.toLowerCase()) {
+        case 'form':
+            endpoint = API_CONFIG.AOF_ENDPOINT;
+            break;
+        case 'pan':
+            endpoint = API_CONFIG.PAN_ENDPOINT;
+            break;
+        case 'aadhar':
+            endpoint = API_CONFIG.AADHAR_ENDPOINT;
+            break;
+        case 'gst':
+            endpoint = API_CONFIG.GST_ENDPOINT;
+            break;
+    }
+    // =============================================================
+
     try {
-        const base64File = await fileToBase64(file);
-
-        const payload = {
-            filename: type, // User requested mapping type to 'filename'
-            file: base64File
-        };
-        console.log(payload);
-
-        console.log(`Preparing to send JSON payload with filename (type): ${type}`);
+        const formData = new FormData();
+        formData.append('file', file); // 🔥 THIS MATCHES curl -F "file=@Aof.pdf"
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
-        const response = await fetch(API_CONFIG.OCR_ENDPOINT, {
+        const response = await fetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload),
+            body: formData, // ❗ NO Content-Type header
             signal: controller.signal
         });
 
@@ -55,33 +53,30 @@ export async function callOCRSpaceAPI(file, type) {
         const result = await response.json();
         console.log('API Response:', result);
 
-        // Check if the response follows the structure { status: 'success', data: { ... } }
         if (result && result.data) {
             const rawData = result.data;
             const keys = Object.keys(rawData);
 
-            // Check if the data is flat (not paginated)
-            // If the first value is not an object, assume it's a flat list of fields and wrap it
             if (keys.length > 0 && typeof rawData[keys[0]] !== 'object') {
-                console.log('Detected flat data structure, wrapping in page1');
                 return { page1: rawData };
             }
-
             return rawData;
         }
+
         return result;
 
     } catch (error) {
         if (error.name === 'AbortError') {
-            throw new Error('Request timed out after 5 hours. Please try again.');
-        } else if (error.message && error.message.includes('Failed to fetch')) {
-            throw new Error('Network error. Please check your connection and try again.');
+            throw new Error('Request timed out after 5 hours.');
+        } else if (error.message?.includes('Failed to fetch')) {
+            throw new Error('Network error.');
         } else {
             console.error('API call error:', error);
             throw error;
         }
     }
 }
+
 
 export function getMockDataForGrid(gridIndex) {
     switch (gridIndex) {
