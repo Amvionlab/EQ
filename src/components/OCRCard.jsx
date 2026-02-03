@@ -144,6 +144,7 @@ const OCRCard = ({ type, title }) => {
             case 'pan': return <FaCreditCard />;
             case 'gst': return <FaFileInvoiceDollar />;
             case 'aadhar': return <FaAddressCard />;
+            case 'cheque': return <FaAddressCard />;
             default: return <FaIdCard />;
         }
     };

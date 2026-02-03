@@ -8,6 +8,7 @@ const HomePage = () => {
             <OCRCard type="pan" title="PAN Card" />
             <OCRCard type="gst" title="GST Certificate" />
             <OCRCard type="aadhar" title="Aadhar Card" />
+            <OCRCard type="cheque" title="Cheque" />
         </div>
     );
 };

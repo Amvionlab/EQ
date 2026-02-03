@@ -2,7 +2,8 @@ export const API_CONFIG = {
     AOF_ENDPOINT: 'http://65.1.52.12:8000/ocr/aof',
     PAN_ENDPOINT: 'http://65.1.52.12:8000/ocr/pan',
     AADHAR_ENDPOINT: 'http://65.1.52.12:8000/ocr/aadhaar',
-    GST_ENDPOINT: 'http://65.1.52.12:8000/ocr/gst',
+    GST_ENDPOINT: 'http://65.1.52.12:8001/ocr/gst',
+    CHEQUE_ENDPOINT: 'http://65.1.52.12:8001/ocr/cheque',
     TIMEOUT: 5 * 60 * 60 * 1000
 };
 
@@ -27,6 +28,9 @@ export async function callOCRSpaceAPI(file, type) {
         case 'gst':
             endpoint = API_CONFIG.GST_ENDPOINT;
             break;
+        case 'cheque':
+            endpoint = API_CONFIG.CHEQUE_ENDPOINT;
+            break;    
     }
     // =============================================================
 
